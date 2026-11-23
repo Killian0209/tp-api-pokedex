@@ -1,0 +1,196 @@
+:root {
+  --rouge: #e3350d;
+  --rouge-fonce: #b82a0a;
+  --jaune: #ffcb05;
+  --bleu: #3b4cca;
+  --fond: #f1f3f9;
+  --carte: #ffffff;
+  --texte: #1f2430;
+  --gris: #6b7280;
+  --rayon: 16px;
+  --ombre: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --ombre-forte: 0 10px 24px rgba(0, 0, 0, 0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--fond);
+  color: var(--texte);
+  line-height: 1.6;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px;
+  background: linear-gradient(90deg, var(--rouge), var(--rouge-fonce));
+  color: white;
+  font-weight: 600;
+  box-shadow: var(--ombre);
+}
+.site-header a { transition: opacity 0.2s; }
+.site-header a:hover { opacity: 0.75; }
+
+.container {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  min-height: 80vh;
+}
+
+.center {
+  text-align: center;
+  padding: 70px 20px;
+  background: var(--carte);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  border-top: 6px solid var(--jaune);
+}
+.center h1 { font-size: 2.6rem; margin-bottom: 8px; }
+.center h2 { color: var(--gris); font-weight: 400; margin-bottom: 28px; }
+.code { font-size: 5rem; font-weight: 800; color: var(--rouge); line-height: 1; }
+.muted { color: var(--gris); margin-bottom: 24px; }
+
+.btn, button {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--rouge);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn:hover, button:hover {
+  background: var(--rouge-fonce);
+  transform: translateY(-2px);
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+input[type="text"] {
+  flex: 1;
+  padding: 12px 18px;
+  border: 2px solid #dde1ea;
+  border-radius: 999px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--bleu);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: var(--carte);
+  border-radius: var(--rayon);
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--ombre);
+  border-bottom: 4px solid transparent;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--ombre-forte);
+  border-color: var(--jaune);
+}
+.card img {
+  width: 100%;
+  max-width: 130px;
+  transition: transform 0.2s;
+}
+.card:hover img { transform: scale(1.1); }
+.card h2 { font-size: 1.05rem; margin-top: 8px; }
+
+.detail {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 32px;
+  background: var(--carte);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  text-align: center;
+}
+.detail .cover {
+  width: 220px;
+  padding: 16px;
+  background: radial-gradient(circle, #fff6cc, var(--fond));
+  border-radius: 50%;
+}
+.detail h1 { margin: 12px 0 4px; }
+.detail p { color: var(--gris); }
+
+.types {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+.types span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--fond);
+  border-radius: 999px;
+  font-weight: 600;
+}
+.types img { height: 22px; }
+
+.stats { margin: 20px 0; text-align: left; }
+.stat {
+  display: grid;
+  grid-template-columns: 90px 40px 1fr;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+.stat progress {
+  width: 100%;
+  height: 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+.stat progress::-webkit-progress-bar { background: #e5e7eb; }
+.stat progress::-webkit-progress-value { background: var(--bleu); border-radius: 999px; }
+.stat progress::-moz-progress-bar { background: var(--bleu); border-radius: 999px; }
+
+.detail .btn { margin-top: 12px; }
+
+.site-footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--gris);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  .center h1 { font-size: 1.9rem; }
+  form { flex-direction: column; }
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .detail { padding: 20px; }
+}
