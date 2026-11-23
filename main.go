@@ -112,7 +112,6 @@ func main() {
 
 	router.HandleFunc("/{$}", HomeHandler)
 	router.HandleFunc("/pokemon", PokemonHandler)
-	router.HandleFunc("/pokemon/{id}", PokemonByIdHandler)
 	router.HandleFunc("/", NotfoundHandler)
 
 	fileServer := http.FileServer(http.Dir("./assets"))
@@ -191,6 +190,14 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PokemonHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Query().Has("id") {
+		PokemonByIdHandler(w, r)
+		return
+	}
+	PokemonListHandler(w, r)
+}
+
+func PokemonListHandler(w http.ResponseWriter, r *http.Request) {
 	result := listPokemon
 
 	if name := strings.TrimSpace(r.URL.Query().Get("name")); name != "" {
