@@ -8,7 +8,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -59,7 +58,7 @@ var (
 	ErrDecode          = errors.New("impossible de décoder la réponse")
 )
 
-func getCharacter(client *http.Client, id string) (*Pokemon, error) {
+func getPokemon(client *http.Client, id string) (*Pokemon, error) {
 
 	endpoint := fmt.Sprintf("%s/pokemon/%d", baseURL, id)
 
@@ -99,8 +98,12 @@ func main() {
 		Timeout: time.Second * 10,
 	}
 
+	if err := loadPokemon(client); err != nil {
+		log.Fatalf("Erreur chargement API : %v", err)
+	}
+
 	
-	jErr := loadPokemon()
+	jErr := loadPokemon(client)
 	if jErr != nil {
 		log.Fatalf("Erreur chargement JSON : %v", jErr)
 	}
@@ -123,7 +126,7 @@ func main() {
 
 	id := "0"
 
-	character, err := getCharacter(client, id)
+	character, err := getPokemon(client, id)
 	if err != nil {
 		switch {
 		case errors.Is(err, ErrNotFound):
@@ -147,15 +150,22 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func loadPokemon() error {
-    file, err := os.Open("pokedex.json")
-    if err != nil {
-        return err
-    }
-    defer file.Close()
+/* pour faire la fonction je me suis aidé de l'ia car je n'arrivais
+à decoder le json à la fin ça ne faisait que de bugé par contre 
+la gestion c'est moi */
 
-    err = json.NewDecoder(file).Decode(&listPokemon)
-    return err
+func loadPokemon(client *http.Client) error {
+	response, err := client.Get(baseURL)
+	if err != nil {
+		return fmt.Errorf("%w: %v", ErrRequestSend, err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("%w: status %d", ErrUnexpectedState, response.StatusCode)
+	}
+
+	return json.NewDecoder(response.Body).Decode(&listPokemon)
 }
 
 func renderTemplate(w http.ResponseWriter, name string, data interface{}) {

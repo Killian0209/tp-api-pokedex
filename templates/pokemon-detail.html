@@ -1,14 +1,25 @@
 {{define "pokemon-detail"}}
 {{template "header" .Name.Fr}}
         <article class="detail">
-            {{ .Sprites.Regular}}
-            <img class="cover" src="{{.}}" alt="Illustration du pokemon {{$.Titre}}">
-            <h1>{{.Name}}</h1>
-            <p>Pokemon N° {{.Id}}</p>
-            <p>{{.Generation}}</p>
+            <img class="cover" src="{{.Sprites.Regular}}" alt="Illustration de {{.Name.Fr}}">
+            <h1>{{.Name.Fr}} ({{.Name.En}})</h1>
+            <p>Pokémon N° {{.Id}}</p>
+            <p>Génération {{.Generation}}</p>
             <p>{{.Category}}</p>
-            <p>{{.Types}}</p>
-            <p>{{.Stats}}</p>
+
+            {{range .Types}}
+              <img src="{{.Image}}" alt="{{.Name}}"> {{.Name}}
+            {{end}}
+
+            <ul>
+              <li>PV : {{.Stats.HP}}</li>
+              <li>Attaque : {{.Stats.Atk}}</li>
+              <li>Défense : {{.Stats.Def}}</li>
+              <li>Atq. Spé : {{.Stats.SpeAtk}}</li>
+              <li>Déf. Spé : {{.Stats.SpeDef}}</li>
+              <li>Vitesse : {{.Stats.Vit}}</li>
+            </ul>
+
             <a class="btn" href="/pokemon">Retour à la liste des pokemon</a>
         </article>
 {{template "footer"}}
