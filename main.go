@@ -45,17 +45,20 @@ var (
 
 func getCharacter(client *http.Client, id string) (*Character, error) {
 
-	jErr := loadProjects()
+	jErr := loadPokemon()
 	if jErr != nil {
 		log.Fatalf("Erreur chargement JSON : %v", jErr)
 	}
 
 	router := http.NewServeMux()
 
-		router.HandleFunc("/{$}", HomeHandler)
+	router.HandleFunc("/{$}", HomeHandler)
+	router.HandleFunc("/pokemon", PokemonHandler)
+	router.HandleFunc("/pokemon/{id}", PokemonByIdHandler)
+	router.HandleFunc("/", NotfoundHandler)
 
-
-
+	fileServer := http.FileServer(http.Dir("./assets"))
+	router.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
 	endpoint := fmt.Sprintf("%s/%v", baseURL, id)
 
@@ -120,7 +123,7 @@ func main() {
 	fmt.Println(*character)
 }
 
-func loadProjects() error {
+func loadPokemon() error {
     file, err := os.Open("data.json")
     if err != nil {
         return err
@@ -151,4 +154,31 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Request : %s %s", r.Method, r.URL.Path)
 
 	renderTemplate(w, "index", nil)
+}
+
+func PokemonHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Request : %s %s", r.Method, r.URL.Path)
+
+	renderTemplate(w, "projects", listCharacter)
+}
+
+func PokemonByIdHandler(w http.ResponseWriter, r *http.Request) {
+    log.Printf("Request : %s %s", r.Method, r.URL.Path)
+
+    id := r.PathValue("id")
+
+    for _, character := range listCharacter {
+        if string(character.Id) == id {
+            renderTemplate(w, "pokemon-detail", character)
+            return
+        }
+    }
+
+    http.Error(w, "Pokemon introuvable...", http.StatusNotFound)
+}
+
+func NotfoundHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Request : %s %s", r.Method, r.URL.Path)
+
+	renderTemplate(w, "error", nil)
 }
