@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -182,34 +183,35 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PokemonHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Request : %s %s", r.Method, r.URL.Path)
-
-	resultat := listPokemon
+	result := listPokemon
 
 	if name := strings.TrimSpace(r.URL.Query().Get("name")); name != "" {
-		resultat = nil
-		for _, n := range listPokemon {
-			if strings.Contains(strings.ToLower(n.Name.Fr), strings.ToLower(name)) {
-				resultat = append(resultat, n)
+		result = nil
+		for _, p := range listPokemon {
+			if strings.Contains(strings.ToLower(p.Name.Fr), strings.ToLower(name)) {
+				result = append(result, p)
 			}
 		}
-		renderTemplate(w, "projects", resultat)
 	}
+
+	renderTemplate(w, "projects", result)
 }
 
 func PokemonByIdHandler(w http.ResponseWriter, r *http.Request) {
-    log.Printf("Request : %s %s", r.Method, r.URL.Path)
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		http.Error(w, "ID invalide", http.StatusBadRequest)
+		return
+	}
 
-    id := r.PathValue("id")
+	for _, p := range listPokemon {
+		if p.Id == id {
+			renderTemplate(w, "pokemon-detail", p)
+			return
+		}
+	}
 
-    for _, pokemon := range listPokemon {
-        if string(pokemon.Id) == id {
-            renderTemplate(w, "pokemon-detail", pokemon)
-            return
-        }
-    }
-
-    http.Error(w, "Pokemon introuvable...", http.StatusNotFound)
+	http.Error(w, "Pokémon introuvable", http.StatusNotFound)
 }
 
 func NotfoundHandler(w http.ResponseWriter, r *http.Request) {
@@ -217,3 +219,4 @@ func NotfoundHandler(w http.ResponseWriter, r *http.Request) {
 
 	renderTemplate(w, "error", nil)
 }
+
