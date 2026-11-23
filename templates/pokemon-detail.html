@@ -7,9 +7,11 @@
             <p>Génération {{.Generation}}</p>
             <p>{{.Category}}</p>
 
+            <div class="types">
             {{range .Types}}
-              <img src="{{.Image}}" alt="{{.Name}}"> {{.Name}}
+                <span><img src="{{.Image}}" alt="{{.Name}}"> {{.Name}}</span>
             {{end}}
+            </div>
 
             <ul>
               <li>PV : {{.Stats.HP}}</li>
