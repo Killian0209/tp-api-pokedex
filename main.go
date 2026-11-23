@@ -16,23 +16,37 @@ const baseURL = "https://tyradex.app/api/v1/pokemon"
 
 var _temp = template.Must(template.ParseGlob("./templates/*.html"))
 
-type Character struct {
-    Id int `json:"id"`
-    Name string `json:"name"`
-    Origin Origin `json:"origin"`
-    Location Location `json:"location"`
-    Image string `json:"image"`
+type Pokemon struct {
+	Id  int    `json:"pokedex_id"`
+	Generation int    `json:"generation"`
+	Category   string `json:"category"`
+	Name       struct {
+		Fr string `json:"fr"`
+		En string `json:"en"`
+		Jp string `json:"jp"`
+	} `json:"name"`
+	Sprites struct {
+		Regular string `json:"regular"`
+	} `json:"sprites"`
+	Types []Type `json:"types"`
+	Stats Stats  `json:"stats"`
 }
 
-type Origin struct {
-	Name string `json:"name"`
+type Type struct {
+	Name  string `json:"name"`
+	Image string `json:"image"`
 }
 
-type Location struct {
-	Name string `json:"name"`
+type Stats struct {
+	HP     int `json:"hp"`
+	Atk    int `json:"atk"`
+	Def    int `json:"def"`
+	SpeAtk int `json:"spe_atk"`
+	SpeDef int `json:"spe_def"`
+	Vit    int `json:"vit"`
 }
 
-var listCharacter []Character
+var listPokemon []Pokemon
 
 var (
 	ErrRequestCreation = errors.New("impossible de créer la requête")
@@ -43,7 +57,7 @@ var (
 	ErrDecode          = errors.New("impossible de décoder la réponse")
 )
 
-func getCharacter(client *http.Client, id string) (*Character, error) {
+func getCharacter(client *http.Client, id string) (*Pokemon, error) {
 
 	endpoint := fmt.Sprintf("%s/pokemon/%d", baseURL, id)
 
@@ -69,12 +83,12 @@ func getCharacter(client *http.Client, id string) (*Character, error) {
 		return nil, ErrUnexpectedState
 	}
 
-	var character Character
-	if err := json.NewDecoder(response.Body).Decode(&character); err != nil {
+	var pokemon Pokemon
+	if err := json.NewDecoder(response.Body).Decode(&pokemon); err != nil {
 		return nil, ErrDecode
 	}
 
-	return &character, nil
+	return &pokemon, nil
 }
 
 func main() {
@@ -128,16 +142,17 @@ func main() {
 	}
 
 	fmt.Println(*character)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func loadPokemon() error {
-    file, err := os.Open("data.json")
+    file, err := os.Open("pokedex.json")
     if err != nil {
         return err
     }
     defer file.Close()
 
-    err = json.NewDecoder(file).Decode(&listCharacter)
+    err = json.NewDecoder(file).Decode(&listPokemon)
     return err
 }
 
@@ -166,7 +181,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 func PokemonHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Request : %s %s", r.Method, r.URL.Path)
 
-	renderTemplate(w, "projects", listCharacter)
+	renderTemplate(w, "projects", listPokemon)
 }
 
 func PokemonByIdHandler(w http.ResponseWriter, r *http.Request) {
@@ -174,9 +189,9 @@ func PokemonByIdHandler(w http.ResponseWriter, r *http.Request) {
 
     id := r.PathValue("id")
 
-    for _, character := range listCharacter {
-        if string(character.Id) == id {
-            renderTemplate(w, "pokemon-detail", character)
+    for _, pokemon := range listPokemon {
+        if string(pokemon.Id) == id {
+            renderTemplate(w, "pokemon-detail", pokemon)
             return
         }
     }
