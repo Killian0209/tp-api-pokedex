@@ -192,7 +192,7 @@ func PokemonHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	renderTemplate(w, "projects", result)
+	renderTemplate(w, "pokemon", result)
 }
 
 func PokemonByIdHandler(w http.ResponseWriter, r *http.Request) {

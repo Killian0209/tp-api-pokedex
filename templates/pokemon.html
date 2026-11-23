@@ -1,0 +1,18 @@
+{{define "pokemon"}}
+{{template "header" "Liste"}}
+
+<form action="/pokemon" method="get">
+  <input type="text" name="name" placeholder="Rechercher un Pokémon...">
+  <button type="submit">Rechercher</button>
+</form>
+
+{{range .}}
+  <a href="/pokemon?id={{.Id}}">
+    <img src="{{.Sprites.Regular}}" alt="{{.Name.Fr}}">
+    <h2>{{.Name.Fr}}</h2>
+  </a>
+{{else}}
+  <p>Aucun Pokémon trouvé.</p>
+{{end}}
+{{template "footer"}}
+{{end}}

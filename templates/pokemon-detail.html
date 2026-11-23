@@ -1,12 +1,14 @@
-{{define "projects-detail"}}
-{{template "header" .Titre}}
+{{define "pokemon-detail"}}
+{{template "header" .Name.Fr}}
         <article class="detail">
-            {{ .Images}}
-            <img class="cover" src="{{.}}" alt="Illustration du projet {{$.Titre}}">
+            {{ .Sprites.Regular}}
+            <img class="cover" src="{{.}}" alt="Illustration du pokemon {{$.Titre}}">
             <h1>{{.Name}}</h1>
-            {{if .Technologies}}<p>{{.Technologies}}</p>
-            <p>{{.Introduction}}</p>
-            <p>{{.Presentation}}</p>
+            <p>Pokemon N° {{.Id}}</p>
+            <p>{{.Generation}}</p>
+            <p>{{.Category}}</p>
+            <p>{{.Types}}</p>
+            <p>{{.Stats}}</p>
             <a class="btn" href="/pokemon">Retour à la liste des pokemon</a>
         </article>
 {{template "footer"}}
