@@ -45,22 +45,7 @@ var (
 
 func getCharacter(client *http.Client, id string) (*Character, error) {
 
-	jErr := loadPokemon()
-	if jErr != nil {
-		log.Fatalf("Erreur chargement JSON : %v", jErr)
-	}
-
-	router := http.NewServeMux()
-
-	router.HandleFunc("/{$}", HomeHandler)
-	router.HandleFunc("/pokemon", PokemonHandler)
-	router.HandleFunc("/pokemon/{id}", PokemonByIdHandler)
-	router.HandleFunc("/", NotfoundHandler)
-
-	fileServer := http.FileServer(http.Dir("./assets"))
-	router.Handle("/static/", http.StripPrefix("/static/", fileServer))
-
-	endpoint := fmt.Sprintf("%s/%v", baseURL, id)
+	endpoint := fmt.Sprintf("%s/pokemon/%d", baseURL, id)
 
 	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
@@ -98,7 +83,29 @@ func main() {
 		Timeout: time.Second * 10,
 	}
 
-	id := "fdfdvfdf"
+	
+	jErr := loadPokemon()
+	if jErr != nil {
+		log.Fatalf("Erreur chargement JSON : %v", jErr)
+	}
+
+	router := http.NewServeMux()
+
+	router.HandleFunc("/{$}", HomeHandler)
+	router.HandleFunc("/pokemon", PokemonHandler)
+	router.HandleFunc("/pokemon/{id}", PokemonByIdHandler)
+	router.HandleFunc("/", NotfoundHandler)
+
+	fileServer := http.FileServer(http.Dir("./assets"))
+	router.Handle("/static/", http.StripPrefix("/static/", fileServer))
+
+	err := http.ListenAndServe("localhost:8080", router)
+	if err != nil {
+		log.Fatalf("Erreur (Serveur) : Impossible de lancer le serveur : %v", err)
+		return
+	}
+
+	id := "0"
 
 	character, err := getCharacter(client, id)
 	if err != nil {
