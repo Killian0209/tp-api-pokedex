@@ -1,0 +1,13 @@
+{{define "projects-detail"}}
+{{template "header" .Titre}}
+        <article class="detail">
+            {{ .Images}}
+            <img class="cover" src="{{.}}" alt="Illustration du projet {{$.Titre}}">
+            <h1>{{.Name}}</h1>
+            {{if .Technologies}}<p>{{.Technologies}}</p>
+            <p>{{.Introduction}}</p>
+            <p>{{.Presentation}}</p>
+            <a class="btn" href="/pokemon">Retour à la liste des pokemon</a>
+        </article>
+{{template "footer"}}
+{{end}}

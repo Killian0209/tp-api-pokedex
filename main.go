@@ -9,7 +9,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
+
+	"golang.org/x/tools/go/analysis/passes/nilfunc"
 )
 
 const baseURL = "https://tyradex.app/api/v1/pokemon"
@@ -181,7 +184,17 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 func PokemonHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Request : %s %s", r.Method, r.URL.Path)
 
-	renderTemplate(w, "projects", listPokemon)
+	resultat := listPokemon
+
+	if name := strings.TrimSpace(r.URL.Query().Get("name")); name != "" {
+		resultat = nil
+		for _, n := range listPokemon {
+			if strings.Contains(strings.ToLower(n.Name.Fr), strings.ToLower(name)) {
+				resultat = append(resultat, n)
+			}
+		}
+		renderTemplate(w, "projects", resultat)
+	}
 }
 
 func PokemonByIdHandler(w http.ResponseWriter, r *http.Request) {
