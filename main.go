@@ -12,8 +12,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"golang.org/x/tools/go/analysis/passes/nilfunc"
 )
 
 const baseURL = "https://tyradex.app/api/v1/pokemon"
