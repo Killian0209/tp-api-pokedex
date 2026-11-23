@@ -1,0 +1,34 @@
+[
+    {
+        "pokedex_id": 1,
+        "generation": 1,
+        "category": "Pokémon Graine",
+        "name": {
+            "fr": "Bulbizarre",
+            "en": "Bulbasaur",
+            "jp": "フシギダネ"
+        },
+        "sprites": {
+            "regular": "https://raw.githubusercontent.com/Yarkis01/TyraDex/images/sprites/1/regular.png"
+        },
+        "types": [
+            {
+                "name": "Plante",
+                "image": "https://raw.githubusercontent.com/Yarkis01/TyraDex/images/types/plante.png"
+            },
+            {
+                "name": "Poison",
+                "image": "https://raw.githubusercontent.com/Yarkis01/TyraDex/images/types/poison.png"
+            }
+        ],
+
+        "stats": {
+            "hp": 45,
+            "atk": 49,
+            "def": 49,
+            "spe_atk": 65,
+            "spe_def": 65,
+            "vit": 45
+        }
+    }
+]
