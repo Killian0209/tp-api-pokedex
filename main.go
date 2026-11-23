@@ -1,16 +1,20 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"time"
 )
 
-const baseURL = "https://rickandmortyapi.com/api/character"
+const baseURL = "https://tyradex.app/api/v1/pokemon"
+
+var _temp = template.Must(template.ParseGlob("./templates/*.html"))
 
 type Character struct {
     Id int `json:"id"`
@@ -28,7 +32,7 @@ type Location struct {
 	Name string `json:"name"`
 }
 
-var listProjects []Project
+var listCharacter []Character
 
 var (
 	ErrRequestCreation = errors.New("impossible de créer la requête")
@@ -123,8 +127,24 @@ func loadProjects() error {
     }
     defer file.Close()
 
-    err = json.NewDecoder(file).Decode(&listProjects)
+    err = json.NewDecoder(file).Decode(&listCharacter)
     return err
+}
+
+func renderTemplate(w http.ResponseWriter, name string, data interface{}) {
+
+	buffer := bytes	.Buffer{}
+
+	errRender := _temp.ExecuteTemplate(&buffer, name, data)
+	if errRender != nil {
+		log.Printf("Erreur (Template) : Impossible de rendre le template %s : %v", name, errRender)
+		http.Error(w, "Erreur chargement de la page", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	buffer.WriteTo(w)
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
